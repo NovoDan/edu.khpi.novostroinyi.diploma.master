@@ -1,0 +1,4 @@
+\.idea
+\venv
+*.attr
+*.dat
