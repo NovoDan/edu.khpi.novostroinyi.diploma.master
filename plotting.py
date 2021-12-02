@@ -1,17 +1,21 @@
+from typing import List
+
 import matplotlib.pyplot as plt
 import numpy as np
-import wfdb
 import pyhrv.frequency_domain as fd
+import wfdb
 from matplotlib import style
 from matplotlib.patches import Ellipse
-from typing import List
 
 
 def plot_ecg(signal, freq, peaks=None, sig_units=None, title=None, time_units=None, samp_to=5000):
     """
     Друк ЕКГ
+    Приймає сигнал ЕКГ, частоту дискретизації
+    Необов'язкові параметри: індекси зубців, назва графіку, одиниці часу, довжина сигналу для друку
     """
     if peaks is not None:
+        # Обрізка сигналу для друку
         signal, cutted_peaks = _cut_signal(signal, peaks, samp_to)
     else:
         signal = signal[:samp_to]
@@ -23,9 +27,7 @@ def plot_ecg(signal, freq, peaks=None, sig_units=None, title=None, time_units=No
 def plot_rr_intervals_graph(rr_intervals, rec_name):
     """
     Друк графіку RR інтервалів
-    :param rr_intervals:
-    :param rec_name:
-    :return:
+    Приймає значення інтервалів на тазву запису для заголовку графіку
     """
     x_2 = np.cumsum(rr_intervals)
 
@@ -41,12 +43,11 @@ def plot_rr_intervals_graph(rr_intervals, rec_name):
     plt.savefig("C:/Users/Antrakal/PycharmProjects/MasterDiploma/plot/Graph_" + rec_name)
 
 
-
 def plot_distrib(nn_intervals, bin_length: int = 8):
     """
     Метод друкує гістограму розподілу RR інтервалів
+    Приймає RR інтервали
     """
-
     max_nn_i = max(nn_intervals)
     min_nn_i = min(nn_intervals)
 
@@ -61,6 +62,7 @@ def plot_distrib(nn_intervals, bin_length: int = 8):
 def plot_poincare(nn_intervals: List[float], plot_sd_features: bool = True):
     """
     Друк графіку Пуанкаре / Лоренца для RR інтервалів
+    Приймає RR інтервали
     """
     ax1 = nn_intervals[:-1]
     ax2 = nn_intervals[1:]
@@ -110,6 +112,7 @@ def plot_poincare(nn_intervals: List[float], plot_sd_features: bool = True):
 def plot_spectrum_density(rri):
     """
     Метод друкує щільність спектру
+    Приймає RR інтервали
     """
     # Розрахунок щільності спектру
     result = fd.welch_psd(nni=rri)
@@ -119,8 +122,13 @@ def plot_spectrum_density(rri):
 
 
 def _cut_signal(signal, peaks, samp_to=5000):
+    """
+    Обрізка сигналу для друку
+    Приймає масив значень сигналу, індекси зубців, кількість зразків для друку
+    """
     signal = signal[:samp_to]
     cutted_peaks = []
+    # Обрізка індексів зубців відповідно до довжини обрізаного інтервалу
     for peak in peaks:
         if peak < len(signal):
             cutted_peaks.append(peak)
