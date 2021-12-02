@@ -1,2 +1,3 @@
-Heard Rate Variability system
-created as  Master Diploma project
+Heart Rate Variability Analysis system with neural network classification
+developed as Master Diploma project
+NTU KhPI 2021
